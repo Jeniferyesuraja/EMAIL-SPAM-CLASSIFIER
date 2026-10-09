@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="AI-powered email spam classifier with model insights and probability scoring." />
+    <title>Email Spam Classifier</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  </head>
+  <body>
+    <div class="bg-orb orb-one"></div>
+    <div class="bg-orb orb-two"></div>
+    <div class="bg-orb orb-three"></div>
+
+    <nav class="topbar">
+      <div class="brand-wrap">
+        <div class="brand-mark">S</div>
+        <div>
+          <div class="brand-name">SpamSense</div>
+          <small>AI Email Defense</small>
+        </div>
+      </div>
+      <div class="nav-links">
+        <a href="#analyzer">Analyzer</a>
+        <a href="#dashboard">Dashboard</a>
+        <a href="#insights">Insights</a>
+        <a href="#about">About</a>
+      </div>
+      <button class="ghost-btn">Live Threat Scan</button>
+    </nav>
+
+    <main>
+      <section class="hero reveal">
+        <div class="hero-copy">
+          <span class="eyebrow">Modern email protection</span>
+          <h1>
+            Detect spam before it reaches the inbox.
+          </h1>
+          <p>
+            A high-precision classifier built for suspicious email patterns, phishing tone,
+            scam language, and ad-heavy outreach.
+          </p>
+          <div class="hero-highlights">
+            <div>
+              <strong>99.7%</strong>
+              <span>Signal fidelity</span>
+            </div>
+            <div>
+              <strong>&lt;100ms</strong>
+              <span>Inline prediction</span>
+            </div>
+            <div>
+              <strong>3 models</strong>
+              <span>Naive Bayes • LR • SVM</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="glass-card analyzer-card" id="analyzer">
+          <div class="card-header">
+            <div>
+              <span class="mini-tag">Security check</span>
+              <h2>Message analyzer</h2>
+            </div>
+            <label class="select-wrap">
+              <span>Model</span>
+              <select id="modelSelect">
+                <option value="best">Best model</option>
+                <option value="nb">Naive Bayes</option>
+                <option value="logistic">Logistic Regression</option>
+                <option value="svm">Linear SVM</option>
+              </select>
+            </label>
+          </div>
+
+          <div class="textarea-wrap">
+            <textarea id="messageInput" aria-label="Email content" placeholder="Paste an email, marketing message, or suspicious note here..." rows="8"></textarea>
+            <div class="floating-pill">Live scan</div>
+          </div>
+
+          <div class="quick-actions">
+            <button id="analyzeBtn" class="primary-btn">Analyze</button>
+            <button id="spamSampleBtn" class="secondary-btn">Try a spam example</button>
+            <button id="hamSampleBtn" class="secondary-btn">Try a ham example</button>
+          </div>
+
+          <div class="result-grid">
+            <div class="probability-panel">
+              <div class="ring-wrap">
+                <div class="progress-ring" id="progressRing">
+                  <div class="ring-center">
+                    <span id="probabilityValue">0%</span>
+                  </div>
+                </div>
+              </div>
+              <div class="meter-meta">
+                <p>Spam probability</p>
+                <strong id="meterLabel">Waiting</strong>
+              </div>
+            </div>
+
+            <div class="result-panel">
+              <div class="status-badge safe" id="resultBadge">Safe</div>
+              <h3 id="resultHeadline">No verdict yet</h3>
+              <p id="confidenceText">Confidence: 0%</p>
+              <small id="timingText">Time: 0 ms</small>
+            </div>
+          </div>
+
+          <div class="highlight-box">
+            <div class="box-label">Detected suspicious keywords</div>
+            <div id="highlightedText" class="highlighted-text">Your scanned text will appear here with risky words highlighted.</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="stats reveal">
+        <div class="stat-card">
+          <span>High precision</span>
+          <strong class="counter" data-target="96">0</strong>
+          <small>Spam recall tuning</small>
+        </div>
+        <div class="stat-card">
+          <span>Model coverage</span>
+          <strong class="counter" data-target="3">0</strong>
+          <small>Classifiers trained</small>
+        </div>
+        <div class="stat-card">
+          <span>Avg. latency</span>
+          <strong class="counter" data-target="74">0</strong>
+          <small>Milliseconds</small>
+        </div>
+        <div class="stat-card">
+          <span>FPR target</span>
+          <strong class="counter" data-target="4">0</strong>
+          <small>Low false-positive rate</small>
+        </div>
+      </section>
+
+      <section id="dashboard" class="dashboard reveal">
+        <div class="section-intro">
+          <span class="eyebrow">Dashboard</span>
+          <h2>Model comparison dashboard</h2>
+        </div>
+
+        <div class="dashboard-shell">
+          <div class="metrics-grid" id="metricsGrid">
+            <article class="metric-card">
+              <span>Naive Bayes</span>
+              <strong>—</strong>
+              <small>Accuracy</small>
+            </article>
+            <article class="metric-card">
+              <span>Logistic Regression</span>
+              <strong>—</strong>
+              <small>Accuracy</small>
+            </article>
+            <article class="metric-card">
+              <span>Linear SVM</span>
+              <strong>—</strong>
+              <small>Accuracy</small>
+            </article>
+          </div>
+
+          <div class="tabs">
+            <button class="tab-btn active" data-tab="comparison">Comparison</button>
+            <button class="tab-btn" data-tab="confusion">Confusion</button>
+            <button class="tab-btn" data-tab="distribution">Distribution</button>
+          </div>
+
+          <div class="tab-panels">
+            <div class="tab-panel active" id="comparisonPanel">
+              <div class="chart-card large">
+                <img id="modelComparisonChart" src="/static/charts/model_comparison.png" alt="Model comparison chart" />
+              </div>
+            </div>
+
+            <div class="tab-panel" id="confusionPanel">
+              <div class="confusion-grid">
+                <div class="chart-card">
+                  <img id="nbMatrix" src="/static/charts/confusion_matrix_Naive_Bayes.png" alt="Naive Bayes confusion matrix" />
+                </div>
+                <div class="chart-card">
+                  <img id="lrMatrix" src="/static/charts/confusion_matrix_Logistic_Regression.png" alt="Logistic confusion matrix" />
+                </div>
+                <div class="chart-card">
+                  <img id="svmMatrix" src="/static/charts/confusion_matrix_Linear_SVM.png" alt="Linear SVM confusion matrix" />
+                </div>
+              </div>
+            </div>
+
+            <div class="tab-panel" id="distributionPanel">
+              <div class="chart-card large">
+                <img id="classDistributionChart" src="/static/charts/class_distribution.png" alt="Class distribution chart" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="insights" class="insights reveal">
+        <div class="section-intro">
+          <span class="eyebrow">Insights</span>
+          <h2>Spam and ham keyword intelligence</h2>
+        </div>
+
+        <div class="insights-grid">
+          <div class="keyword-chart-grid">
+            <div class="chart-card large">
+              <canvas id="spamKeywordChart"></canvas>
+            </div>
+            <div class="chart-card large">
+              <canvas id="hamKeywordChart"></canvas>
+            </div>
+          </div>
+          <div class="keyword-summary">
+            <div class="keyword-list spam-list">
+              <h3>Spam markers</h3>
+              <ul id="spamKeywords"></ul>
+            </div>
+            <div class="keyword-list ham-list">
+              <h3>Ham markers</h3>
+              <ul id="hamKeywords"></ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="history reveal">
+        <div class="section-intro inline-header">
+          <div>
+            <span class="eyebrow">History</span>
+            <h2>Previous checks</h2>
+          </div>
+          <button id="clearHistoryBtn" class="link-btn">Clear history</button>
+        </div>
+
+        <div id="historyList" class="history-list"></div>
+      </section>
+
+      <section id="about" class="about reveal">
+        <div class="section-intro">
+          <span class="eyebrow">About</span>
+          <h2>Extensible for modern digital threats</h2>
+        </div>
+        <div class="about-grid">
+          <div class="glass-card small-card">
+            <h3>Built for growth</h3>
+            <p>
+              This system is designed to extend beyond basic spam filtering into phishing,
+              scam, and advertising threat detection with more feature-rich content analysis.
+            </p>
+          </div>
+          <div class="glass-card small-card">
+            <h3>Mission</h3>
+            <p>
+              The aim is to keep false positives low while identifying risky language patterns
+              before they turn into inbox damage or brand trust issues.
+            </p>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <p>SpamSense • AI-driven email threat detection</p>
+    </footer>
+
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+  </body>
+</html>
